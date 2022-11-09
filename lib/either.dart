@@ -10,6 +10,12 @@ abstract class Either<L, R> {
   B fold<B>(B Function(L) ifLeft, B Function(R) ifRight);
 }
 
+/// Instantiates a [Left].
+Either<L, R> left<L, R>(L l) => Left(l);
+
+/// Instantiates a [Right] value.
+Either<L, R> right<L, R>(R r) => Right(r);
+
 /// Left side of [Either]. By convention this is the error side.
 @immutable
 class Left<L, R> extends Either<L, R> {
