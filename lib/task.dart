@@ -20,4 +20,15 @@ class Task<A> {
               (err) => err is E ? left<E, A>(err) : throw err,
             ),
       );
+
+  /// Attempts to run the task.
+  Task<Option<A>> attemptOption() => Task(
+        () => run()
+            .then(
+              (v) => some<A>(v),
+            )
+            .catchError(
+              (err) => none<A>(),
+            ),
+      );
 }
