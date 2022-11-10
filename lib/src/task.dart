@@ -21,14 +21,10 @@ class Task<A> {
             ),
       );
 
-  /// Attempts to run the task.
-  Task<Option<A>> attemptOption() => Task(
-        () => run()
-            .then(
-              (v) => some<A>(v),
-            )
-            .catchError(
-              (err) => none<A>(),
-            ),
+  /// Use for apis that return null instead of throwing an exception.
+  Task<Either<dynamic, A>> attemptNullNoException() => Task(
+        () => run().then(
+          (v) => v != null ? right<dynamic, A>(v) : left<dynamic, A>(null),
+        ),
       );
 }
