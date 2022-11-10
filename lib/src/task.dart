@@ -22,9 +22,9 @@ class Task<A> {
       );
 
   /// Use for apis that return null instead of throwing an exception.
-  Task<Either<dynamic, A>> attemptNullNoException() => Task(
+  Task<Either<Exception, A>> attemptNullToException(Exception e) => Task(
         () => run().then(
-          (v) => v != null ? right<dynamic, A>(v) : left<dynamic, A>(null),
+          (v) => v != null ? right<Exception, A>(v) : left<Exception, A>(e),
         ),
       );
 }
