@@ -1,4 +1,4 @@
-part of functional;
+import 'package:flutter/foundation.dart';
 
 /// Either [L] or [R]. Cannot be instantiated directly.
 @immutable
@@ -7,28 +7,25 @@ abstract class Either<L, R> {
   const Either();
 
   /// Matches the value of the [Either] and returns the result of the coordinate functions.
-  B fold<B>(B Function(L) ifLeft, B Function(R) ifRight);
+  B match<B>(B Function(L left) onLeft, B Function(R right) onRight);
 }
 
 /// Instantiates a [Left].
-Either<L, R> left<L, R>(L l) => Left(l);
+Either<L, R> left<L, R>(L left) => Left(left);
 
 /// Instantiates a [Right] value.
-Either<L, R> right<L, R>(R r) => Right(r);
+Either<L, R> right<L, R>(R right) => Right(right);
 
 /// Left side of [Either]. By convention this is the error side.
 @immutable
 class Left<L, R> extends Either<L, R> {
   /// Default constructor for [Left].
-  const Left(this._l);
+  const Left(L left) : _left = left;
 
-  final L _l;
-
-  /// Returns the value of the left side.
-  L get value => _l;
+  final L _left;
 
   @override
-  B fold<B>(B Function(L) ifLeft, B Function(R) ifRight) => ifLeft(_l);
+  B match<B>(B Function(L left) onLeft, B Function(R right) onRight) => onLeft(_left);
 
   @override
   bool operator ==(Object other) {
@@ -36,26 +33,23 @@ class Left<L, R> extends Either<L, R> {
       return true;
     }
 
-    return other is Left<L, R> && other._l == _l;
+    return other is Left<L, R> && other._left == _left;
   }
 
   @override
-  int get hashCode => _l.hashCode;
+  int get hashCode => _left.hashCode;
 }
 
 /// Right side of [Either]. By convention this is the success side.
 @immutable
 class Right<L, R> extends Either<L, R> {
   /// Default constructor for [Right].
-  const Right(this._r);
+  const Right(R right) : _right = right;
 
-  final R _r;
-
-  /// Returns the value of the right side.
-  R get value => _r;
+  final R _right;
 
   @override
-  B fold<B>(B Function(L) ifLeft, B Function(R) ifRight) => ifRight(_r);
+  B match<B>(B Function(L left) onLeft, B Function(R right) onRight) => onRight(_right);
 
   @override
   bool operator ==(Object other) {
@@ -63,9 +57,9 @@ class Right<L, R> extends Either<L, R> {
       return true;
     }
 
-    return other is Right<L, R> && other._r == _r;
+    return other is Right<L, R> && other._right == _right;
   }
 
   @override
-  int get hashCode => _r.hashCode;
+  int get hashCode => _right.hashCode;
 }

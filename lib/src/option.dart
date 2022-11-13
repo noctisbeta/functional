@@ -1,4 +1,4 @@
-part of functional;
+import 'package:flutter/foundation.dart';
 
 /// Option.
 @immutable

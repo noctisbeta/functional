@@ -1,4 +1,6 @@
-part of functional;
+import 'package:flutter/cupertino.dart';
+
+@immutable
 
 /// Void.
 class Unit {

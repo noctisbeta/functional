@@ -1,5 +1,3 @@
-part of functional;
-
 /// Bool extension.
 extension BoolExtension on bool {
   /// Matches the value of the [bool] and returns the result of the coordinate functions.

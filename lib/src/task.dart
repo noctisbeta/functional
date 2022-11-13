@@ -1,4 +1,7 @@
-part of functional;
+import 'package:flutter/cupertino.dart';
+import 'package:functional/src/either.dart';
+
+@immutable
 
 /// A [Task].
 class Task<A> {
@@ -25,6 +28,13 @@ class Task<A> {
   Task<Either<Exception, A>> attemptNullToException(Exception e) => Task(
         () => run().then(
           (v) => v != null ? right<Exception, A>(v) : left<Exception, A>(e),
+        ),
+      );
+
+  /// Maps the task.
+  Task<Either<E, A>> flatMap<E>(Task<Either<E, A>> Function(A) f) => Task(
+        () => run().then(
+          (v) => f(v).run(),
         ),
       );
 }
