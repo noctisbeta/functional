@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:functional/functional.dart';
 import 'package:functional/src/either.dart';
 
 @immutable
@@ -14,7 +15,7 @@ class Task<A> {
   Future<A> run() => _run.call();
 
   /// Use for async apis that return [A] and can throw [E].
-  Task<Either<E, A>> attempt<E>() => Task(
+  Task<Either<E, A>> attemptEither<E>() => Task(
         () => run()
             .then(
               (v) => right<E, A>(v),
@@ -25,9 +26,16 @@ class Task<A> {
       );
 
   /// Use for async apis that return null instead of throwing an exception.
-  Task<Either<Exception, A>> attemptNullToException(Exception e) => Task<Either<Exception, A>>(
+  Task<Either<Exception, A>> attemptNullToException(Exception e) => Task(
         () => run().then(
           (v) => v == null ? left<Exception, A>(e) : right<Exception, A>(v),
+        ),
+      );
+
+  /// Use for async apis that can return null.
+  Task<Option<A>> attemptOption() => Task(
+        () => run().then(
+          (v) => v == null ? none<A>() : some<A>(v),
         ),
       );
 }
