@@ -6,6 +6,9 @@ abstract class Option<A> {
   /// Default constructor.
   const Option();
 
+  /// Option of constructor.
+  factory Option.of(A? value) => value == null ? None<A>() : Some<A>(value);
+
   /// Match.
   B match<B>(B Function() ifNone, B Function(A some) ifSome);
 }
@@ -17,7 +20,7 @@ Option<A> none<A>() => const None();
 Option<A> some<A>(A a) => Some(a);
 
 /// Creates an [Option] from a nullable value.
-Option<A> optionOf<A>(A? value) => value != null ? some(value) : none();
+Option<A> optionOf<A>(A? value) => value == null ? None<A>() : Some<A>(value);
 
 /// Instantiates a [Some].
 @immutable

@@ -28,14 +28,14 @@ class Task<A> {
   /// Use for async apis that return null instead of throwing an exception.
   Task<Either<Exception, A>> attemptNullToException(Exception e) => Task(
         () => run().then(
-          (v) => v == null ? left<Exception, A>(e) : right<Exception, A>(v),
+          (v) => v == null ? Left<Exception, A>(e) : Right<Exception, A>(v),
         ),
       );
 
   /// Use for async apis that can return null.
   Task<Option<A>> attemptOption() => Task(
         () => run().then(
-          (v) => v == null ? none<A>() : some<A>(v),
+          (v) => v == null ? None<A>() : Some<A>(v),
         ),
       );
 }
