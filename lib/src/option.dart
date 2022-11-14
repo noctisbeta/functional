@@ -7,7 +7,7 @@ abstract class Option<A> {
   const Option();
 
   /// Match.
-  B fold<B>(B Function() ifNone, B Function(A some) ifSome);
+  B match<B>(B Function() ifNone, B Function(A some) ifSome);
 }
 
 /// Instantiates a [None].
@@ -23,15 +23,12 @@ Option<A> optionOf<A>(A? value) => value != null ? some(value) : none();
 @immutable
 class Some<A> extends Option<A> {
   /// Default constructor.
-  const Some(this._a);
+  const Some(A some) : _some = some;
 
-  final A _a;
-
-  /// Returns the value of the [Some].
-  A get value => _a;
+  final A _some;
 
   @override
-  B fold<B>(B Function() ifNone, B Function(A some) ifSome) => ifSome(_a);
+  B match<B>(B Function() ifNone, B Function(A some) ifSome) => ifSome(_some);
 
   @override
   bool operator ==(Object other) {
@@ -39,11 +36,11 @@ class Some<A> extends Option<A> {
       return true;
     }
 
-    return other is Some<A> && other._a == _a;
+    return other is Some<A> && other._some == _some;
   }
 
   @override
-  int get hashCode => _a.hashCode;
+  int get hashCode => _some.hashCode;
 }
 
 /// Instantiates a [None].
@@ -53,5 +50,5 @@ class None<A> extends Option<A> {
   const None();
 
   @override
-  B fold<B>(B Function() ifNone, B Function(A some) ifSome) => ifNone();
+  B match<B>(B Function() ifNone, B Function(A some) ifSome) => ifNone();
 }

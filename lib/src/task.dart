@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:functional/functional.dart';
 import 'package:functional/src/either.dart';
+import 'package:functional/src/option.dart';
 
 @immutable
 
