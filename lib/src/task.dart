@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:functional/src/either.dart';
 import 'package:functional/src/option.dart';
+import 'package:functional/src/unit.dart';
 
 @immutable
 
@@ -9,19 +10,27 @@ class Task<A> {
   /// Default constructor.
   const Task(Future<A> Function() task) : _run = task;
 
+  /// Converts void to unit.
+  static Task<Unit> fromVoid(Future<void> Function() task) => Task(
+        () {
+          task();
+          return Future.value(unit);
+        },
+      );
+
   final Future<A> Function() _run;
 
   /// Runs the task.
   Future<A> run() => _run.call();
 
   /// Use for async apis that return [A] and can throw [E].
-  Task<Either<E, A>> attemptEither<E>() => Task(
+  Task<Either<E, A>> attemptEither<E extends Object>() => Task(
         () => run()
             .then(
               (v) => right<E, A>(v),
             )
-            .catchError(
-              (err) => err is E ? left<E, A>(err) : throw err,
+            .onError<E>(
+              (error, stackTrace) => left<E, A>(error),
             ),
       );
 
