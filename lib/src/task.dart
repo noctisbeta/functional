@@ -20,9 +20,8 @@ class Task<A> {
 
   /// Converts nullable to option.
   static Task<Option<B>> fromNullable<B>(Future<B?> Function() task) => Task(
-        () {
-          return task().then((value) => value == null ? None<B>() : Some<B>(value));
-        },
+        () =>
+            task().then((value) => value == null ? None<B>() : Some<B>(value)),
       );
 
   final Future<A> Function() _run;
