@@ -40,17 +40,32 @@ class Task<A> {
             ),
       );
 
+  /// Use for async apis that return [A] and can throw exceptions.
+  Task<Either<Exception, A>> attemptException() => Task(
+        () => run()
+            .then(
+              (v) => right<Exception, A>(v),
+            )
+            .onError<Exception>(
+              (error, stackTrace) => left<Exception, A>(error),
+            ),
+      );
+
+  /// Use for async apis that return [A] and you want to catch everything.
+  Task<Either<dynamic, A>> attemptAll() => Task(
+        () => run()
+            .then(
+              (v) => right<dynamic, A>(v),
+            )
+            .onError(
+              (error, stackTrace) => left<dynamic, A>(error),
+            ),
+      );
+
   /// Use for async apis that return null instead of throwing an exception.
   Task<Either<Exception, A>> attemptNullToException(Exception e) => Task(
         () => run().then(
           (v) => v == null ? Left<Exception, A>(e) : Right<Exception, A>(v),
-        ),
-      );
-
-  /// Use for async apis that can return null.
-  Task<Option<A>> attemptOption() => Task(
-        () => run().then(
-          (v) => v == null ? None<A>() : Some<A>(v),
         ),
       );
 }
