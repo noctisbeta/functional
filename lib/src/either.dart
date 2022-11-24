@@ -1,12 +1,16 @@
 import 'package:flutter/foundation.dart';
+import 'package:functional/src/abstractions/applicative.dart';
+import 'package:functional/src/abstractions/functor.dart';
+import 'package:functional/src/abstractions/monad.dart';
 
 /// Either [L] or [R]. Cannot be instantiated directly.
 @immutable
-abstract class Either<L, R> {
+abstract class Either<L, R> implements Functor<R>, Applicative<R>, Monad<R> {
   /// Default constructor.
   const Either();
 
-  /// Matches the value of the [Either] and returns the result of the coordinate functions.
+  /// Matches the value of the [Either] and returns the result of the coordinate
+  /// functions.
   B match<B>(B Function(L left) onLeft, B Function(R right) onRight);
 }
 
@@ -25,19 +29,24 @@ class Left<L, R> extends Either<L, R> {
   final L _left;
 
   @override
-  B match<B>(B Function(L left) onLeft, B Function(R right) onRight) => onLeft(_left);
+  B match<B>(B Function(L left) onLeft, B Function(R right) onRight) =>
+      onLeft(_left);
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-
-    return other is Left<L, R> && other._left == _left;
-  }
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Left<L, R> && other._left == _left;
 
   @override
   int get hashCode => _left.hashCode;
+
+  @override
+  Either<L, A> apply<A>(covariant Either<L, A Function(R p1)> f) => Left(_left);
+
+  @override
+  Either<L, A> bind<A>(covariant Either<L, A> Function(R p1) f) => Left(_left);
+
+  @override
+  Either<L, A> map<A>(A Function(R) f) => Left(_left);
 }
 
 /// Right side of [Either]. By convention this is the success side.
@@ -49,17 +58,23 @@ class Right<L, R> extends Either<L, R> {
   final R _right;
 
   @override
-  B match<B>(B Function(L left) onLeft, B Function(R right) onRight) => onRight(_right);
+  B match<B>(B Function(L left) onLeft, B Function(R right) onRight) =>
+      onRight(_right);
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-
-    return other is Right<L, R> && other._right == _right;
-  }
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Right<L, R> && other._right == _right;
 
   @override
   int get hashCode => _right.hashCode;
+
+  @override
+  Either<L, A> apply<A>(covariant Either<L, A Function(R)> f) =>
+      f.match(left, (func) => Right(func(_right)));
+
+  @override
+  Either<L, A> bind<A>(covariant Either<L, A> Function(R) f) => f(_right);
+
+  @override
+  Right<L, A> map<A>(A Function(R) f) => Right(f(_right));
 }

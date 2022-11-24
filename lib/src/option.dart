@@ -3,13 +3,14 @@ import 'package:functional/src/abstractions/applicative.dart';
 import 'package:functional/src/abstractions/functor.dart';
 import 'package:functional/src/abstractions/monad.dart';
 
-/// Option.
+/// Sum type for representing optional values. Instances of [Option] are either
+/// an instance of [Some] or the object [None].
 @immutable
 abstract class Option<T> implements Functor<T>, Applicative<T>, Monad<T> {
   /// Default constructor.
   const Option();
 
-  /// Option of constructor.
+  /// Converts a [T?] to an [Option<T>].
   factory Option.of(T? value) => value == null ? None<T>() : Some<T>(value);
 
   /// Match.
@@ -73,7 +74,7 @@ class None<T> extends Option<T> {
   None<A> bind<A>(covariant Option<A> Function(T) f) => None<A>();
 
   @override
-  bool operator ==(Object other) => other is None;
+  bool operator ==(Object other) => identical(this, other) || other is None;
 
   @override
   int get hashCode => 0;
