@@ -33,7 +33,7 @@ class Task<T> implements Functor<T>, Applicative<T>, Monad<T> {
   Future<T> run() => _run.call();
 
   /// Use for async apis that return [T] and can throw [E].
-  Task<Either<E, T>> attemptEither<E extends Object>() => Task(
+  Task<Either<E, T>> attempt<E extends Object>() => Task(
         () => run()
             .then(
               (v) => right<E, T>(v),
@@ -51,6 +51,17 @@ class Task<T> implements Functor<T>, Applicative<T>, Monad<T> {
             )
             .onError<Exception>(
               (error, stackTrace) => left<Exception, T>(error),
+            ),
+      );
+
+  /// Use for async apis that return [T] and can throw objects.
+  Task<Either<Object, T>> attemptObject() => Task(
+        () => run()
+            .then(
+              (v) => right<Object, T>(v),
+            )
+            .onError<Object>(
+              (error, stackTrace) => left<Object, T>(error),
             ),
       );
 
