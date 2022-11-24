@@ -1,14 +1,17 @@
 import 'package:flutter/cupertino.dart';
+import 'package:functional/src/abstractions/applicative.dart';
+import 'package:functional/src/abstractions/functor.dart';
+import 'package:functional/src/abstractions/monad.dart';
 import 'package:functional/src/either.dart';
 import 'package:functional/src/option.dart';
 import 'package:functional/src/unit.dart';
 
 @immutable
 
-/// A [Task].
-class Task<A> {
+/// T [Task].
+class Task<T> implements Functor<T>, Applicative<T>, Monad<T> {
   /// Default constructor.
-  const Task(Future<A> Function() task) : _run = task;
+  const Task(Future<T> Function() task) : _run = task;
 
   /// Converts void to unit.
   static Task<Unit> fromVoid(Future<void> Function() task) => Task(
@@ -24,48 +27,58 @@ class Task<A> {
             task().then((value) => value == null ? None<B>() : Some<B>(value)),
       );
 
-  final Future<A> Function() _run;
+  final Future<T> Function() _run;
 
   /// Runs the task.
-  Future<A> run() => _run.call();
+  Future<T> run() => _run.call();
 
-  /// Use for async apis that return [A] and can throw [E].
-  Task<Either<E, A>> attemptEither<E extends Object>() => Task(
+  /// Use for async apis that return [T] and can throw [E].
+  Task<Either<E, T>> attemptEither<E extends Object>() => Task(
         () => run()
             .then(
-              (v) => right<E, A>(v),
+              (v) => right<E, T>(v),
             )
             .onError<E>(
-              (error, stackTrace) => left<E, A>(error),
+              (error, stackTrace) => left<E, T>(error),
             ),
       );
 
-  /// Use for async apis that return [A] and can throw exceptions.
-  Task<Either<Exception, A>> attemptException() => Task(
+  /// Use for async apis that return [T] and can throw exceptions.
+  Task<Either<Exception, T>> attemptException() => Task(
         () => run()
             .then(
-              (v) => right<Exception, A>(v),
+              (v) => right<Exception, T>(v),
             )
             .onError<Exception>(
-              (error, stackTrace) => left<Exception, A>(error),
+              (error, stackTrace) => left<Exception, T>(error),
             ),
       );
 
-  /// Use for async apis that return [A] and you want to catch everything.
-  Task<Either<dynamic, A>> attemptAll() => Task(
+  /// Use for async apis that return [T] and you want to catch everything.
+  Task<Either<dynamic, T>> attemptAll() => Task(
         () => run()
             .then(
-              (v) => right<dynamic, A>(v),
+              (v) => right<dynamic, T>(v),
             )
             .onError(
-              (error, stackTrace) => left<dynamic, A>(error),
+              (error, stackTrace) => left<dynamic, T>(error),
             ),
       );
 
   /// Use for async apis that return null instead of throwing an exception.
-  Task<Either<Exception, A>> attemptNullToException(Exception e) => Task(
+  Task<Either<Exception, T>> attemptNullToException(Exception e) => Task(
         () => run().then(
-          (v) => v == null ? Left<Exception, A>(e) : Right<Exception, A>(v),
+          (v) => v == null ? Left<Exception, T>(e) : Right<Exception, T>(v),
         ),
       );
+
+  @override
+  Task<A> map<A>(A Function(T) f) => Task(() => run().then(f));
+
+  @override
+  Task<A> apply<A>(covariant Task<A Function(T)> f) => f.bind(map);
+
+  @override
+  Task<A> bind<A>(covariant Task<A> Function(T) f) =>
+      Task(() => run().then((val) => f(val).run()));
 }
