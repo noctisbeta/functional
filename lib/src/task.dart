@@ -15,8 +15,8 @@ class Task<T> implements Functor<T>, Applicative<T>, Monad<T> {
 
   /// Converts void to unit.
   static Task<Unit> fromVoid(Future<void> Function() task) => Task(
-        () {
-          task();
+        () async {
+          await task();
           return Future.value(unit);
         },
       );
