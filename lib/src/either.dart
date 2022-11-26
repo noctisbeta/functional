@@ -5,13 +5,22 @@ import 'package:functional/src/abstractions/monad.dart';
 
 /// Either [L] or [R]. Cannot be instantiated directly.
 @immutable
-abstract class Either<L, R> implements Functor<R>, Applicative<R>, Monad<R> {
+abstract class Either<L, R> with Functor<R>, Applicative<R>, Monad<R> {
   /// Default constructor.
   const Either();
 
   /// Matches the value of the [Either] and returns the result of the coordinate
   /// functions.
   B match<B>(B Function(L left) onLeft, B Function(R right) onRight);
+
+  @override
+  Either<L, B> map<B>(B Function(R) f);
+
+  @override
+  Either<L, A> apply<A>(covariant Either<L, A Function(R)> f);
+
+  @override
+  Either<L, A> bind<A>(covariant Either<L, A> Function(R) f);
 }
 
 /// Instantiates a [Left].
@@ -76,5 +85,5 @@ class Right<L, R> extends Either<L, R> {
   Either<L, A> bind<A>(covariant Either<L, A> Function(R) f) => f(_right);
 
   @override
-  Right<L, A> map<A>(A Function(R) f) => Right(f(_right));
+  Either<L, A> map<A>(A Function(R) f) => Right(f(_right));
 }
