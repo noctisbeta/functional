@@ -36,6 +36,19 @@ extension TaskEitherExtension<L, R> on Task<Either<L, R>> {
         ),
       );
 
+  /// Peek either right.
+  Task<Either<L, R>> peekEitherRight(void Function(R right) onRight) => Task(
+        () => run().then(
+          (either) => either.match(
+            (left) => either,
+            (right) {
+              onRight(right);
+              return either;
+            },
+          ),
+        ),
+      );
+
   /// Map either right.
   Task<Either<L, S>> mapEitherRight<S>(S Function(R right) f) => Task(
         () => run().then(
