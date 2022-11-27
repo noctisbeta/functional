@@ -92,4 +92,13 @@ class Task<T> implements Functor<T>, Applicative<T>, Monad<T> {
   @override
   Task<A> bind<A>(covariant Task<A> Function(T) f) =>
       Task(() => run().then((val) => f(val).run()));
+
+  /// Peek at the value of the task and run a side effect, then return the same
+  /// value that was peeked.
+  Task<T> peek(void Function(T) f) => Task(
+        () => run().then((val) {
+          f(val);
+          return val;
+        }),
+      );
 }
