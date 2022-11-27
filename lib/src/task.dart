@@ -103,4 +103,7 @@ class Task<T> implements Functor<T>, Applicative<T>, Monad<T> {
           return val;
         }),
       );
+
+  /// Then.
+  Future<A> then<A>(A Function(T value) f) => run().then(f);
 }
