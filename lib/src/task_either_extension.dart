@@ -35,4 +35,14 @@ extension TaskEitherExtension<L, R> on Task<Either<L, R>> {
           ),
         ),
       );
+
+  /// Map either right.
+  Task<Either<L, S>> mapEitherRight<S>(S Function(R right) f) => Task(
+        () => run().then(
+          (either) => either.match(
+            Left.new,
+            (right) => Right(f(right)),
+          ),
+        ),
+      );
 }
