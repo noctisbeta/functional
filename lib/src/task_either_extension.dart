@@ -45,4 +45,15 @@ extension TaskEitherExtension<L, R> on Task<Either<L, R>> {
           ),
         ),
       );
+
+  /// Bind either.
+  Task<Either<L, S>> bindEither<S>(Task<Either<L, S>> Function(R right) f) =>
+      Task(
+        () => run().then(
+          (either) async => either.match(
+            left,
+            (r) => f(r).run(),
+          ),
+        ),
+      );
 }
