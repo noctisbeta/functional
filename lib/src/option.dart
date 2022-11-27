@@ -13,18 +13,31 @@ abstract class Option<T> implements Functor<T>, Applicative<T>, Monad<T> {
   /// Converts a [T?] to an [Option<T>].
   factory Option.of(T? value) => value == null ? None<T>() : Some<T>(value);
 
-  /// Match.
-  A match<A>(A Function() ifNone, A Function(T some) ifSome);
+  /// Pattern matching for [Option]. Provides a way to handle both [Some] and
+  /// [None] cases with the provided [some] and [none] functions respectively.
+  A match<A>({
+    required A Function() none,
+    required A Function(T value) some,
+  });
+
+  @override
+  Option<A> apply<A>(covariant Option<A Function(T)> f) => f.match(
+        none: None<A>.new,
+        some: map,
+      );
+
+  @override
+  Option<A> bind<A>(covariant Option<A> Function(T) f) => match(
+        none: None<A>.new,
+        some: f,
+      );
+
+  @override
+  Option<A> map<A>(A Function(T) f) => match(
+        none: None<A>.new,
+        some: (value) => Some<A>(f(value)),
+      );
 }
-
-/// Instantiates a [None].
-None<T> none<T>() => const None();
-
-/// Instantiates a [Some].
-Some<T> some<T>(T a) => Some(a);
-
-/// Creates an [Option] from a nullable value.
-Option<T> optionOf<T>(T? value) => value == null ? None<T>() : Some<T>(value);
 
 /// Instantiates a [Some].
 @immutable
@@ -35,17 +48,11 @@ class Some<T> extends Option<T> {
   final T _value;
 
   @override
-  A match<A>(A Function() ifNone, A Function(T some) ifSome) => ifSome(_value);
-
-  @override
-  Some<A> map<A>(A Function(T) f) => Some(f(_value));
-
-  @override
-  Option<A> apply<A>(covariant Option<A Function(T)> f) =>
-      f.match(none, (func) => Some(func(_value)));
-
-  @override
-  Option<A> bind<A>(covariant Option<A> Function(T) f) => f(_value);
+  A match<A>({
+    required A Function() none,
+    required A Function(T value) some,
+  }) =>
+      some(_value);
 
   @override
   bool operator ==(Object other) =>
@@ -62,16 +69,11 @@ class None<T> extends Option<T> {
   const None();
 
   @override
-  A match<A>(A Function() ifNone, A Function(T some) ifSome) => ifNone();
-
-  @override
-  None<A> map<A>(A Function(T) f) => None<A>();
-
-  @override
-  None<A> apply<A>(covariant None<A Function(T p1)> f) => None<A>();
-
-  @override
-  None<A> bind<A>(covariant Option<A> Function(T) f) => None<A>();
+  A match<A>({
+    required A Function() none,
+    required A Function(T value) some,
+  }) =>
+      none();
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is None;
