@@ -21,6 +21,15 @@ abstract class Either<L, R> with Functor<R>, Applicative<R>, Monad<R> {
 
   @override
   Either<L, A> bind<A>(covariant Either<L, A> Function(R) f);
+
+  /// Peek at the value of the [Either] without changing it.
+  Either<L, R> peekLeft(void Function(L) f) => match(
+        (left) {
+          f(left);
+          return this;
+        },
+        (right) => this,
+      );
 }
 
 /// Instantiates a [Left].
