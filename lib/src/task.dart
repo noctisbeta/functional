@@ -6,6 +6,8 @@ import 'package:functional/src/either.dart';
 import 'package:functional/src/option.dart';
 import 'package:functional/src/unit.dart';
 
+export 'package:functional/src/task_either_extension.dart';
+
 @immutable
 
 /// T [Task].
