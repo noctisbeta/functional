@@ -22,4 +22,17 @@ extension TaskEitherExtension<L, R> on Task<Either<L, R>> {
           ),
         ),
       );
+
+  /// Peek either left.
+  Task<Either<L, R>> peekEitherLeft(void Function(L left) onLeft) => Task(
+        () => run().then(
+          (either) => either.match(
+            (left) {
+              onLeft(left);
+              return either;
+            },
+            (right) => either,
+          ),
+        ),
+      );
 }
