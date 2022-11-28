@@ -1,14 +1,8 @@
 import 'package:functional/src/unit.dart';
 
-/// Calls [f] before returning [toReturn].
-A withEffect<A, B>(A toReturn, B Function() f) {
-  f();
-  return toReturn;
-}
-
-/// Calls [f] before returning [tapped].
-A tap<A, B>(A tapped, B Function() f) {
-  f();
+/// Calls [effect] before returning [tapped].
+A tap<A, B>({required A tapped, required B Function() effect}) {
+  effect();
   return tapped;
 }
 
