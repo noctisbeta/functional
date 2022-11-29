@@ -16,7 +16,7 @@ class Task<T> implements Functor<T>, Applicative<T>, Monad<T> {
   const Task(Future<T> Function() task) : _run = task;
 
   /// Creates a [Task] from [value].
-  static Task value<T>(T value) => Task(() => Future.value(value));
+  static Task<T> value<T>(T value) => Task(() => Future.value(value));
 
   /// Converts void to unit.
   static Task<Unit> fromVoid(Future<void> Function() task) => Task(
