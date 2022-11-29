@@ -1,7 +1,7 @@
 import 'package:functional/src/unit.dart';
 
 /// Calls [effect] before returning [tapped].
-A tap<A extends Object, B>({required A tapped, required B Function() effect}) {
+A tap<A>({required A tapped, required Function() effect}) {
   effect();
   return tapped;
 }
