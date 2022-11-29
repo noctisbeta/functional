@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:functional/src/abstractions/applicative.dart';
 import 'package:functional/src/abstractions/functor.dart';
 import 'package:functional/src/abstractions/monad.dart';
+import 'package:functional/src/either.dart';
 
 /// Sum type for representing optional values. Instances of [Option] are either
 /// an instance of [Some] or the object [None].
@@ -12,6 +13,10 @@ abstract class Option<T> implements Functor<T>, Applicative<T>, Monad<T> {
 
   /// Converts a [T?] to an [Option<T>].
   factory Option.of(T? value) => value == null ? None<T>() : Some<T>(value);
+
+  /// Converts an [Option] to an [Either].
+  Either<L, T> toEither<L>(L left) =>
+      match(none: () => Left(left), some: Right.new);
 
   /// Pattern matching for [Option]. Provides a way to handle both [Some] and
   /// [None] cases with the provided [some] and [none] functions respectively.
