@@ -9,6 +9,10 @@ abstract class Either<L, R> with Functor<R>, Applicative<R>, Monad<R> {
   /// Default constructor.
   const Either();
 
+  /// Converts a nullable to [Either].
+  factory Either.fromNullable(R? r, L Function() onNull) =>
+      r != null ? Right(r) : Left(onNull());
+
   /// Matches the value of the [Either] and returns the result of the coordinate
   /// functions.
   B match<B>(B Function(L left) onLeft, B Function(R right) onRight);
