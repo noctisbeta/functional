@@ -15,8 +15,8 @@ abstract class Option<T> implements Functor<T>, Applicative<T>, Monad<T> {
   factory Option.of(T? value) => value == null ? None<T>() : Some<T>(value);
 
   /// Converts an [Option] to an [Either].
-  Either<L, T> toEither<L>(L left) =>
-      match(none: () => Left(left), some: Right.new);
+  Either<L, T> toEither<L>(L Function() onLeft) =>
+      match(none: () => Left(onLeft()), some: Right.new);
 
   /// Pattern matching for [Option]. Provides a way to handle both [Some] and
   /// [None] cases with the provided [some] and [none] functions respectively.
