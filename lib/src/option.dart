@@ -25,6 +25,16 @@ abstract class Option<T> implements Functor<T>, Applicative<T>, Monad<T> {
     required A Function(T value) some,
   });
 
+  /// Unwraps the [Option] and returns the contained [T] value. Throws a state
+  /// error if the [Option] is [None].
+  ///
+  /// Only use if you are sure that the [Option] is [Some] and being [None]
+  /// is an illegal state that should terminate the program.
+  T unwrap() => match(
+        none: () => throw StateError('Bad state. Option is None.'),
+        some: (value) => value,
+      );
+
   @override
   Option<A> apply<A>(covariant Option<A Function(T)> f) => f.match(
         none: None<A>.new,
