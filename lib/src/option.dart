@@ -7,7 +7,7 @@ import 'package:functional/src/either.dart';
 /// Sum type for representing optional values. Instances of [Option] are either
 /// an instance of [Some] or the object [None].
 @immutable
-abstract class Option<T> implements Functor<T>, Applicative<T>, Monad<T> {
+sealed class Option<T> implements Functor<T>, Applicative<T>, Monad<T> {
   /// Default constructor.
   const Option();
 

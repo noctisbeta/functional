@@ -5,7 +5,7 @@ import 'package:functional/src/abstractions/monad.dart';
 
 /// Either [L] or [R]. Cannot be instantiated directly.
 @immutable
-abstract class Either<L, R> with Functor<R>, Applicative<R>, Monad<R> {
+sealed class Either<L, R> with Functor<R>, Applicative<R>, Monad<R> {
   /// Default constructor.
   const Either();
 
