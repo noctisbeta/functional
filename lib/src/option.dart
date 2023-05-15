@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:functional/src/abstractions/applicative.dart';
 import 'package:functional/src/abstractions/functor.dart';
 import 'package:functional/src/abstractions/monad.dart';
@@ -58,23 +59,23 @@ sealed class Option<T> implements Functor<T>, Applicative<T>, Monad<T> {
 @immutable
 class Some<T> extends Option<T> {
   /// Default constructor.
-  const Some(T value) : _value = value;
+  const Some(this.value);
 
-  final T _value;
+  final T value;
 
   @override
   A match<A>({
     required A Function() none,
     required A Function(T value) some,
   }) =>
-      some(_value);
+      some(value);
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Some<T> && _value == other._value;
+      identical(this, other) || other is Some<T> && value == other.value;
 
   @override
-  int get hashCode => _value.hashCode;
+  int get hashCode => value.hashCode;
 }
 
 /// Instantiates a [None].
