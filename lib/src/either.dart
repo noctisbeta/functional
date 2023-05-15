@@ -46,57 +46,59 @@ Either<L, R> right<L, R>(R right) => Right(right);
 @immutable
 class Left<L, R> extends Either<L, R> {
   /// Default constructor for [Left].
-  const Left(L left) : _left = left;
+  const Left(this.left);
 
-  final L _left;
+  /// Left value.
+  final L left;
 
   @override
   B match<B>(B Function(L left) onLeft, B Function(R right) onRight) =>
-      onLeft(_left);
+      onLeft(left);
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Left<L, R> && other._left == _left;
+      identical(this, other) || other is Left<L, R> && other.left == left;
 
   @override
-  int get hashCode => _left.hashCode;
+  int get hashCode => left.hashCode;
 
   @override
-  Either<L, A> apply<A>(covariant Either<L, A Function(R p1)> f) => Left(_left);
+  Either<L, A> apply<A>(covariant Either<L, A Function(R p1)> f) => Left(left);
 
   @override
-  Either<L, A> bind<A>(covariant Either<L, A> Function(R p1) f) => Left(_left);
+  Either<L, A> bind<A>(covariant Either<L, A> Function(R p1) f) => Left(left);
 
   @override
-  Either<L, A> map<A>(A Function(R) f) => Left(_left);
+  Either<L, A> map<A>(A Function(R) f) => Left(left);
 }
 
 /// Right side of [Either]. By convention this is the success side.
 @immutable
 class Right<L, R> extends Either<L, R> {
   /// Default constructor for [Right].
-  const Right(R right) : _right = right;
+  const Right(this.right);
 
-  final R _right;
+  /// Right value.
+  final R right;
 
   @override
   B match<B>(B Function(L left) onLeft, B Function(R right) onRight) =>
-      onRight(_right);
+      onRight(right);
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Right<L, R> && other._right == _right;
+      identical(this, other) || other is Right<L, R> && other.right == right;
 
   @override
-  int get hashCode => _right.hashCode;
+  int get hashCode => right.hashCode;
 
   @override
   Either<L, A> apply<A>(covariant Either<L, A Function(R)> f) =>
-      f.match(left, (func) => Right(func(_right)));
+      f.match(left, (func) => Right(func(right)));
 
   @override
-  Either<L, A> bind<A>(covariant Either<L, A> Function(R) f) => f(_right);
+  Either<L, A> bind<A>(covariant Either<L, A> Function(R) f) => f(right);
 
   @override
-  Either<L, A> map<A>(A Function(R) f) => Right(f(_right));
+  Either<L, A> map<A>(A Function(R) f) => Right(f(right));
 }
