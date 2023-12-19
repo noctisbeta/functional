@@ -36,18 +36,31 @@ sealed class Option<T> implements Functor<T>, Applicative<T>, Monad<T> {
         some: (value) => value,
       );
 
+  /// Takes a function [f] that returns an [Option<A Function(T)>] (an option
+  /// of a function that takes a [T] and returns an [A]) and applies it to this
+  /// [Option]. If this [Option] is [None], the result is [None]. If this
+  /// [Option] is [Some], the function [f] is applied to the value of this
+  /// [Option] and the result is returned.
   @override
   Option<A> apply<A>(covariant Option<A Function(T)> f) => f.match(
         none: None<A>.new,
         some: map,
       );
 
+  /// Takes a function [f], which takes a parameter [T] and returns a
+  /// [Option<A>]. If this [Option] is [None], the result is [None]. If this
+  /// [Option] is [Some], the function [f] is applied to the value of this
+  /// [Option] and the result is returned.
   @override
   Option<A> bind<A>(covariant Option<A> Function(T) f) => match(
         none: None<A>.new,
         some: f,
       );
 
+  /// Takes a function [f] and applies it to the value of this [Option]. If this
+  /// [Option] is [None], the result is [None]. If this [Option] is [Some], the
+  /// function [f] is applied to the value of this [Option] and the result is
+  /// returned.
   @override
   Option<A> map<A>(A Function(T) f) => match(
         none: None<A>.new,
@@ -61,6 +74,7 @@ class Some<T> extends Option<T> {
   /// Default constructor.
   const Some(this.value);
 
+  /// The value of this [Some].
   final T value;
 
   @override
